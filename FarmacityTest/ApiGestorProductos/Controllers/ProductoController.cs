@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ApiGestorProductos.Models;
 using ApiGestorProductos.Services.Interfaces;
+using ApiGestorProductos.DTOs;
 
 namespace ApiGestorProductos.Controllers
 {
@@ -34,7 +35,21 @@ namespace ApiGestorProductos.Controllers
         public async Task<IActionResult> Create([FromBody] Producto producto)
         {
             if (producto == null) return BadRequest();
-            var createdProducto = await _service.CreateProductoAsync(producto);
+
+            // Convertir Producto a ProductoDto antes de pasar al servicio
+            var productoDto = new ProductoDto
+            {
+                Nombre = producto.Nombre,
+                Precio = producto.Precio,
+                CantidadEnStock = producto.CantidadEnStock,
+                Activo = producto.Activo,
+                FechaAlta = producto.FechaAlta,
+                FechaModificacion = producto.FechaModificacion
+            };
+
+            var createdProducto = await _service.CreateProductoAsync(productoDto);
+
+            // Retornar el ProductoDto creado
             return CreatedAtAction(nameof(GetById), new { id = createdProducto.Id }, createdProducto);
         }
 
@@ -42,7 +57,22 @@ namespace ApiGestorProductos.Controllers
         public async Task<IActionResult> Update(int id, [FromBody] Producto producto)
         {
             if (producto == null || producto.Id != id) return BadRequest();
-            var updatedProducto = await _service.UpdateProductoAsync(producto);
+
+            // Convertir Producto a ProductoDto antes de pasar al servicio
+            var productoDto = new ProductoDto
+            {
+                Id = producto.Id,
+                Nombre = producto.Nombre,
+                Precio = producto.Precio,
+                CantidadEnStock = producto.CantidadEnStock,
+                Activo = producto.Activo,
+                FechaAlta = producto.FechaAlta,
+                FechaModificacion = producto.FechaModificacion
+            };
+
+            var updatedProducto = await _service.UpdateProductoAsync(productoDto);
+
+            // Retornar el ProductoDto actualizado
             return Ok(updatedProducto);
         }
 

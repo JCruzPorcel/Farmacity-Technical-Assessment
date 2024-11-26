@@ -1,13 +1,13 @@
-﻿using ApiGestorProductos.Models;
+﻿using ApiGestorProductos.DTOs;
 
 namespace ApiGestorProductos.Services.Interfaces
 {
     public interface IProductoService
     {
-        Task<Producto> GetProductoByIdAsync(int id);
-        Task<IEnumerable<Producto>> GetAllProductosAsync();
-        Task<Producto> CreateProductoAsync(Producto producto);
-        Task<Producto> UpdateProductoAsync(Producto producto);
+        Task<ProductoDto> GetProductoByIdAsync(int id);
+        Task<IEnumerable<ProductoDto>> GetAllProductosAsync(); 
+        Task<ProductoDto> CreateProductoAsync(ProductoDto productoDto);
+        Task<ProductoDto> UpdateProductoAsync(ProductoDto productoDto);
         Task<bool> DeleteProductoAsync(int id);
     }
 }

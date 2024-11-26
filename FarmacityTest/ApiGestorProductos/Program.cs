@@ -4,7 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configura servicios
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();  // Necesario para que funcione Swagger
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "API Gestor Productos", Version = "v1" });
