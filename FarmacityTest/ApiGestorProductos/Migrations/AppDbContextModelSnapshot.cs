@@ -50,7 +50,7 @@ namespace ApiGestorProductos.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Productos");
+                    b.ToTable("Productos", (string)null);
                 });
 
             modelBuilder.Entity("CodigoBarra", b =>
@@ -72,7 +72,7 @@ namespace ApiGestorProductos.Migrations
 
                     b.HasKey("ProductoId");
 
-                    b.ToTable("CodigosBarra");
+                    b.ToTable("CodigosBarra", (string)null);
                 });
 
             modelBuilder.Entity("CodigoBarra", b =>
