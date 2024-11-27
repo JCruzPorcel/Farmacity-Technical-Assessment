@@ -11,12 +11,12 @@
         public DateTime? FechaModificacion { get; set; }
 
         // Relación con CodigoBarra (uno a muchos)
-        public ICollection<CodigoBarra>? CodigosBarra { get; set; }
-        
+        public ICollection<CodigoBarra> CodigosBarra { get; set; }
+
         public Producto()
         {
             FechaAlta = DateTime.UtcNow;
-            FechaModificacion = DateTime.UtcNow;
+            CodigosBarra = new List<CodigoBarra>();
         }
     }
 }

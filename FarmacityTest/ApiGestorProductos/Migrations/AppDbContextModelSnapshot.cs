@@ -22,28 +22,6 @@ namespace ApiGestorProductos.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ApiGestorProductos.Models.CodigoBarra", b =>
-                {
-                    b.Property<int>("ProductoId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Codigo")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("Activo")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("FechaAlta")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("FechaModificacion")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("ProductoId", "Codigo");
-
-                    b.ToTable("CodigosBarra");
-                });
-
             modelBuilder.Entity("ApiGestorProductos.Models.Producto", b =>
                 {
                     b.Property<int>("Id")
@@ -68,7 +46,6 @@ namespace ApiGestorProductos.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Precio")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
@@ -76,7 +53,37 @@ namespace ApiGestorProductos.Migrations
                     b.ToTable("Productos");
                 });
 
-            modelBuilder.Entity("ApiGestorProductos.Models.CodigoBarra", b =>
+            modelBuilder.Entity("CodigoBarra", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Codigo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaAlta")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaModificacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ProductoId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductoId");
+
+                    b.ToTable("CodigosBarra");
+                });
+
+            modelBuilder.Entity("CodigoBarra", b =>
                 {
                     b.HasOne("ApiGestorProductos.Models.Producto", "Producto")
                         .WithMany("CodigosBarra")
