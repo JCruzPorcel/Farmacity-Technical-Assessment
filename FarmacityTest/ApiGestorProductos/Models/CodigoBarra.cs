@@ -1,4 +1,4 @@
-﻿using ApiGestorProductos.Models;
+﻿using Backend.Models;
 
 public class CodigoBarra
 {

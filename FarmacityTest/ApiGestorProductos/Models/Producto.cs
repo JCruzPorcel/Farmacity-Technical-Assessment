@@ -1,4 +1,4 @@
-﻿namespace ApiGestorProductos.Models
+﻿namespace Backend.Models
 {
     public class Producto
     {

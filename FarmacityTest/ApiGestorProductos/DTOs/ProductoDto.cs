@@ -1,4 +1,4 @@
-﻿namespace ApiGestorProductos.DTOs
+﻿namespace Backend.DTOs
 {
     public class ProductoDto
     {

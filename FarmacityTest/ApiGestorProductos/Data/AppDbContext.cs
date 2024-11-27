@@ -1,7 +1,7 @@
-﻿using ApiGestorProductos.Models;
+﻿using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace ApiGestorProductos.Data
+namespace Backend.Data
 {
     public class AppDbContext : DbContext
     {

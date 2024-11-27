@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using ApiGestorProductos.Services.Interfaces;
-using ApiGestorProductos.Services;
-using ApiGestorProductos.Repositories.Interfaces;
-using ApiGestorProductos.Repositories;
-using ApiGestorProductos.Data;
+using Backend.Data;
+using Backend.Services;
+using Backend.Repositories;
+using Backend.Services.Interfaces;
+using Backend.Repositories.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,14 +19,24 @@ builder.Services.AddSwaggerGen(c =>
 // Configuración de CORS para permitir solicitudes solo desde localhost
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowLocalhost", policy =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:5027", "https://localhost:7009") // Puertos Default, cambiar de ser necesario.
-              .AllowAnyMethod()
-              .AllowAnyHeader()
-              .AllowCredentials();
+        var frontendUrl = builder.Configuration["FRONTEND_URL"]; // Obtiene la URL del frontend desde las configuraciones o variables de entorno
+        if (!string.IsNullOrEmpty(frontendUrl))
+        {
+            policy.WithOrigins(frontendUrl)
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials();
+        }
+        else
+        {
+            // En caso de no encontrar la variable de entorno, lanzar un error.
+            throw new InvalidOperationException("La variable de entorno 'FRONTEND_URL' no está definida. No se puede configurar CORS.");
+        }
     });
 });
+
 
 // Configuración de DbContext para SQL Server
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -55,7 +65,7 @@ if (app.Environment.IsDevelopment())
 app.UseExceptionHandler("/error");  // Redirige a un controlador de error personalizado si ocurre una excepción no controlada
 
 // Habilitar CORS con la política configurada
-app.UseCors("AllowLocalhost");
+app.UseCors("AllowFrontend");
 
 app.UseAuthorization();
 

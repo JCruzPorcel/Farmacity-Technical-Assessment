@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ApiGestorProductos.Models;
-using ApiGestorProductos.Services.Interfaces;
-using ApiGestorProductos.DTOs;
+using Backend.Models;
+using Backend.Services.Interfaces;
+using Backend.DTOs;
 
-namespace ApiGestorProductos.Controllers
+namespace Backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

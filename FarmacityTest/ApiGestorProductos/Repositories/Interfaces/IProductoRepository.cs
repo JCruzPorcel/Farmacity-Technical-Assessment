@@ -1,6 +1,6 @@
-﻿using ApiGestorProductos.Models;
+﻿using Backend.Models;
 
-namespace ApiGestorProductos.Repositories.Interfaces
+namespace Backend.Repositories.Interfaces
 {
     public interface IProductoRepository
     {

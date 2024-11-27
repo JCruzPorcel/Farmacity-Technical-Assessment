@@ -1,10 +1,10 @@
 ﻿// Servicio para la lógica de negocio de productos
-using ApiGestorProductos.DTOs;
-using ApiGestorProductos.Models;
-using ApiGestorProductos.Repositories.Interfaces;
-using ApiGestorProductos.Services.Interfaces;
+using Backend.DTOs;
+using Backend.Models;
+using Backend.Repositories.Interfaces;
+using Backend.Services.Interfaces;
 
-namespace ApiGestorProductos.Services
+namespace Backend.Services
 {
     public class ProductoService : IProductoService
     {

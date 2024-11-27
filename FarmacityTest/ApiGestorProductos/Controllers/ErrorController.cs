@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace ApiGestorProductos.Controllers
+namespace Backend.Controllers
 {
     [Route("error")]
     [ApiController]

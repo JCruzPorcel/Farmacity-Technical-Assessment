@@ -1,6 +1,6 @@
-﻿using ApiGestorProductos.DTOs;
+﻿using Backend.DTOs;
 
-namespace ApiGestorProductos.Services.Interfaces
+namespace Backend.Services.Interfaces
 {
     public interface IProductoService
     {

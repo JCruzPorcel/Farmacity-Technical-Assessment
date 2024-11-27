@@ -9,24 +9,14 @@
     }
   },
   "profiles": {
-    "http": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:5027",
+    "Frontend": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files\\nodejs\\node.exe", // Path al ejecutable de Node.js
+      "workingDirectory": "C:\\Users\\miusuario\\proyectos\\angular-frontend", // Path a la raíz del proyecto Angular
+      "applicationUrl": "http://localhost:4200",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
-    "https": {
-      "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:7009;http://localhost:5027",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "FRONTEND_URL": "http://localhost:4200",
+        "API_URL": "https://localhost:7009" // Dirección del backend en HTTPS
       }
     },
     "IIS Express": {
