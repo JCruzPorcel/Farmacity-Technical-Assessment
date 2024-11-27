@@ -1,4 +1,5 @@
-﻿using ApiGestorProductos.DTOs;
+﻿// Servicio para la lógica de negocio de productos
+using ApiGestorProductos.DTOs;
 using ApiGestorProductos.Models;
 using ApiGestorProductos.Repositories.Interfaces;
 using ApiGestorProductos.Services.Interfaces;
@@ -20,53 +21,63 @@ namespace ApiGestorProductos.Services
             var producto = await _repository.GetProductoByIdAsync(id);
             if (producto == null) throw new Exception("Producto no encontrado.");
 
+            // Convertir entidad Producto a DTO antes de retornar
             return MapProductoToDto(producto);
         }
 
-        // Obtener todos los Productos
+        // Obtener todos los productos
         public async Task<IEnumerable<ProductoDto>> GetAllProductosAsync()
         {
             var productos = await _repository.GetAllProductosAsync();
+            // Convertir cada Producto en un DTO
             return productos.Select(MapProductoToDto).ToList();
         }
 
-        // Crear un Producto
+        // Crear un nuevo Producto
         public async Task<ProductoDto> CreateProductoAsync(ProductoDto productoDto)
         {
             if (productoDto == null)
                 throw new ArgumentNullException(nameof(productoDto), "El producto no puede ser nulo.");
 
+            // Mapear DTO a entidad Producto
             var producto = MapDtoToProducto(productoDto);
+
+            // Guardar en el repositorio
             var createdProducto = await _repository.AddProductoAsync(producto);
+
+            // Convertir entidad creada a DTO antes de retornar
             return MapProductoToDto(createdProducto);
         }
 
-        // Actualizar Producto
+        // Actualizar Producto existente
         public async Task<ProductoDto> UpdateProductoAsync(ProductoDto productoDto)
         {
             if (productoDto == null)
                 throw new ArgumentNullException(nameof(productoDto), "El producto no puede ser nulo.");
 
-            // Buscar el producto en el repositorio
+            // Buscar producto en la base de datos
             var productoExistente = await _repository.GetProductoByIdAsync(productoDto.Id);
             if (productoExistente == null)
                 throw new Exception("Producto no encontrado.");
 
-            // Actualizar producto y códigos de barra
+            // Actualizar campos del Producto y sus códigos de barra
             UpdateProductoFields(productoExistente, productoDto);
+
+            // Guardar cambios en el repositorio
             var updatedProducto = await _repository.UpdateProductoAsync(productoExistente);
 
+            // Convertir entidad actualizada a DTO antes de retornar
             return MapProductoToDto(updatedProducto);
         }
 
         // Eliminar Producto
         public async Task<bool> DeleteProductoAsync(int id)
         {
+            // Eliminar por ID usando el repositorio
             return await _repository.DeleteProductoAsync(id);
         }
 
-        // Métodos auxiliares
-
+        // Mapeo de entidad Producto a DTO
         private ProductoDto MapProductoToDto(Producto producto)
         {
             return new ProductoDto
@@ -89,6 +100,7 @@ namespace ApiGestorProductos.Services
             };
         }
 
+        // Mapeo de DTO a entidad Producto
         private Producto MapDtoToProducto(ProductoDto productoDto)
         {
             return new Producto
@@ -109,25 +121,45 @@ namespace ApiGestorProductos.Services
             };
         }
 
+        // Actualizar campos y relaciones del Producto existente
         private void UpdateProductoFields(Producto productoExistente, ProductoDto productoDto)
         {
+            // Actualizar campos simples
             productoExistente.Nombre = productoDto.Nombre;
             productoExistente.Precio = productoDto.Precio;
             productoExistente.CantidadEnStock = productoDto.CantidadEnStock;
             productoExistente.Activo = productoDto.Activo;
             productoExistente.FechaModificacion = DateTime.UtcNow;
 
-            // Actualizar códigos de barra
-            if (productoDto.CodigosBarra != null && productoDto.CodigosBarra.Any())
+            // Actualizar relación de códigos de barra
+            var codigosAEliminar = productoExistente.CodigosBarra
+                .Where(cb => !productoDto.CodigosBarra!.Any(dto => dto.Codigo == cb.Codigo))
+                .ToList();
+
+            foreach (var codigo in codigosAEliminar)
             {
-                productoExistente.CodigosBarra.Clear();
-                productoExistente.CodigosBarra = productoDto.CodigosBarra.Select(cbDto => new CodigoBarra
+                productoExistente.CodigosBarra.Remove(codigo);
+            }
+
+            foreach (var cbDto in productoDto.CodigosBarra!)
+            {
+                var codigoExistente = productoExistente.CodigosBarra
+                    .FirstOrDefault(cb => cb.Codigo == cbDto.Codigo);
+
+                if (codigoExistente != null)
                 {
-                    Codigo = cbDto.Codigo,
-                    Activo = cbDto.Activo,
-                    FechaAlta = DateTime.UtcNow,
-                    FechaModificacion = DateTime.UtcNow
-                }).ToList();
+                    codigoExistente.Activo = cbDto.Activo;
+                    codigoExistente.FechaModificacion = DateTime.UtcNow;
+                }
+                else
+                {
+                    productoExistente.CodigosBarra.Add(new CodigoBarra
+                    {
+                        Codigo = cbDto.Codigo,
+                        Activo = cbDto.Activo,
+                        FechaAlta = DateTime.UtcNow
+                    });
+                }
             }
         }
     }

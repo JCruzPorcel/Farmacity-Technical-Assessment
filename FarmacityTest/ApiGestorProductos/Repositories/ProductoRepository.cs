@@ -1,68 +1,132 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ApiGestorProductos.Data;
 using ApiGestorProductos.Models;
 using ApiGestorProductos.Repositories.Interfaces;
-using ApiGestorProductos.Data;
+using Microsoft.EntityFrameworkCore;
 
-namespace ApiGestorProductos.Repositories
+public class ProductoRepository : IProductoRepository
 {
-    public class ProductoRepository : IProductoRepository
+    private readonly AppDbContext _context;
+
+    public ProductoRepository(AppDbContext context)
     {
-        private readonly AppDbContext _context;
+        _context = context;
+    }
 
-        public ProductoRepository(AppDbContext context)
+    // Obtener Producto por ID
+    public async Task<Producto> GetProductoByIdAsync(int id)
+    {
+        var producto = await _context.Productos
+                                     .Include(p => p.CodigosBarra)
+                                     .FirstOrDefaultAsync(p => p.Id == id);
+
+        if (producto == null)
         {
-            _context = context;
+            throw new Exception($"Producto con ID {id} no encontrado.");
         }
 
-        // Obtener Producto por ID
-        public async Task<Producto> GetProductoByIdAsync(int id)
-        {
-            var producto = await _context.Productos
-                                         .Include(p => p.CodigosBarra)
-                                         .FirstOrDefaultAsync(p => p.Id == id);
+        return producto;
+    }
 
-            if (producto == null)
+    // Obtener todos los productos
+    public async Task<IEnumerable<Producto>> GetAllProductosAsync()
+    {
+        return await _context.Productos
+                             .Include(p => p.CodigosBarra)
+                             .ToListAsync();
+    }
+
+    // Agregar un nuevo Producto
+    public async Task<Producto> AddProductoAsync(Producto producto)
+    {
+        await _context.Productos.AddAsync(producto);
+        await _context.SaveChangesAsync();
+        return producto;
+    }
+
+
+    // Actualizar un Producto
+    public async Task<Producto> UpdateProductoAsync(Producto producto)
+    {
+        var productoExistente = await _context.Productos
+                                              .Include(p => p.CodigosBarra)
+                                              .FirstOrDefaultAsync(p => p.Id == producto.Id);
+
+        if (productoExistente == null)
+            throw new Exception($"Producto con ID {producto.Id} no encontrado.");
+
+        // Verificar si el producto ha cambiado realmente
+        bool productoChanged = false;
+        if (producto.Nombre != productoExistente.Nombre)
+        {
+            productoExistente.Nombre = producto.Nombre;
+            productoChanged = true;
+        }
+        if (producto.Precio != productoExistente.Precio)
+        {
+            productoExistente.Precio = producto.Precio;
+            productoChanged = true;
+        }
+        if (producto.CantidadEnStock != productoExistente.CantidadEnStock)
+        {
+            productoExistente.CantidadEnStock = producto.CantidadEnStock;
+            productoChanged = true;
+        }
+        if (producto.Activo != productoExistente.Activo)
+        {
+            productoExistente.Activo = producto.Activo;
+            productoChanged = true;
+        }
+
+        // Solo se actualiza la fecha de modificación si el producto ha cambiado
+        if (productoChanged)
+        {
+            productoExistente.FechaModificacion = DateTime.UtcNow;
+        }
+
+        // Actualizar los códigos de barra
+        if (producto.CodigosBarra != null && producto.CodigosBarra.Any())
+        {
+            foreach (var codigo in producto.CodigosBarra)
             {
-                throw new Exception($"Producto con ID {id} no encontrado.");
+                var codigoExistente = productoExistente.CodigosBarra
+                                                        .FirstOrDefault(cb => cb.ProductoId == codigo.ProductoId);
+                if (codigoExistente != null)
+                {
+                    // Si el código ha cambiado, se actualiza
+                    if (codigo.Codigo != codigoExistente.Codigo)
+                    {
+                        codigoExistente.Codigo = codigo.Codigo;
+                        codigoExistente.FechaModificacion = DateTime.UtcNow;
+                    }
+                }
+                else
+                {
+                    // Si no existe, se agrega el nuevo código
+                    productoExistente.CodigosBarra.Add(new CodigoBarra
+                    {
+                        Codigo = codigo.Codigo,
+                        Activo = codigo.Activo,
+                        FechaAlta = DateTime.UtcNow,
+                        FechaModificacion = DateTime.UtcNow,
+                        ProductoId = productoExistente.Id
+                    });
+                }
             }
-
-            return producto;
         }
 
-        // Obtener todos los productos
-        public async Task<IEnumerable<Producto>> GetAllProductosAsync()
-        {
-            return await _context.Productos
-                                 .Include(p => p.CodigosBarra)
-                                 .ToListAsync();
-        }
+        await _context.SaveChangesAsync();
+        return productoExistente;
+    }
 
-        // Agregar un nuevo Producto
-        public async Task<Producto> AddProductoAsync(Producto producto)
-        {
-            await _context.Productos.AddAsync(producto);
-            await _context.SaveChangesAsync();
-            return producto;
-        }
+    // Eliminar un Producto
+    public async Task<bool> DeleteProductoAsync(int id)
+    {
+        var producto = await _context.Productos.FindAsync(id);
+        if (producto == null)
+            return false;
 
-        // Actualizar un Producto
-        public async Task<Producto> UpdateProductoAsync(Producto producto)
-        {
-            _context.Productos.Update(producto);
-            await _context.SaveChangesAsync();
-            return producto;
-        }
-
-        // Eliminar un Producto
-        public async Task<bool> DeleteProductoAsync(int id)
-        {
-            var producto = await _context.Productos.FindAsync(id);
-            if (producto == null)
-                return false;
-
-            _context.Productos.Remove(producto);
-            await _context.SaveChangesAsync();
-            return true;
-        }
+        _context.Productos.Remove(producto);
+        await _context.SaveChangesAsync();
+        return true;
     }
 }

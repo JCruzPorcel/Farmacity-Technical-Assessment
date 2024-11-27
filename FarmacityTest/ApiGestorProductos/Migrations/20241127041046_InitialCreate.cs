@@ -33,17 +33,15 @@ namespace ApiGestorProductos.Migrations
                 name: "CodigosBarra",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProductoId = table.Column<int>(type: "int", nullable: false),
                     Codigo = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Activo = table.Column<bool>(type: "bit", nullable: false),
                     FechaAlta = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FechaModificacion = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ProductoId = table.Column<int>(type: "int", nullable: false)
+                    FechaModificacion = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CodigosBarra", x => x.Id);
+                    table.PrimaryKey("PK_CodigosBarra", x => x.ProductoId);
                     table.ForeignKey(
                         name: "FK_CodigosBarra_Productos_ProductoId",
                         column: x => x.ProductoId,
@@ -51,11 +49,6 @@ namespace ApiGestorProductos.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CodigosBarra_ProductoId",
-                table: "CodigosBarra",
-                column: "ProductoId");
         }
 
         /// <inheritdoc />

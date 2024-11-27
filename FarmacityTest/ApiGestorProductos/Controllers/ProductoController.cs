@@ -67,7 +67,15 @@ namespace ApiGestorProductos.Controllers
                 CantidadEnStock = producto.CantidadEnStock,
                 Activo = producto.Activo,
                 FechaAlta = producto.FechaAlta,
-                FechaModificacion = producto.FechaModificacion
+                FechaModificacion = producto.FechaModificacion,
+                CodigosBarra = producto.CodigosBarra?.Select(cb => new CodigoBarraDto
+                {
+                    ProductoId = cb.ProductoId,
+                    Codigo = cb.Codigo,
+                    Activo = cb.Activo,
+                    FechaAlta = cb.FechaAlta,
+                    FechaModificacion = cb.FechaModificacion
+                }).ToList() // Asegúrate de convertir los códigos de barra en el DTO correspondiente
             };
 
             var updatedProducto = await _service.UpdateProductoAsync(productoDto);

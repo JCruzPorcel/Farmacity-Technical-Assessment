@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ApiGestorProductos.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241127033050_InitialCreate")]
+    [Migration("20241127041046_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -58,11 +58,8 @@ namespace ApiGestorProductos.Migrations
 
             modelBuilder.Entity("CodigoBarra", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("ProductoId")
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Activo")
                         .HasColumnType("bit");
@@ -76,12 +73,7 @@ namespace ApiGestorProductos.Migrations
                     b.Property<DateTime?>("FechaModificacion")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ProductoId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductoId");
+                    b.HasKey("ProductoId");
 
                     b.ToTable("CodigosBarra");
                 });

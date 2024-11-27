@@ -55,11 +55,8 @@ namespace ApiGestorProductos.Migrations
 
             modelBuilder.Entity("CodigoBarra", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("ProductoId")
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("Activo")
                         .HasColumnType("bit");
@@ -73,12 +70,7 @@ namespace ApiGestorProductos.Migrations
                     b.Property<DateTime?>("FechaModificacion")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ProductoId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductoId");
+                    b.HasKey("ProductoId");
 
                     b.ToTable("CodigosBarra");
                 });

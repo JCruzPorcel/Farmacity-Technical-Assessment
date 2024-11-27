@@ -17,13 +17,20 @@ namespace ApiGestorProductos.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // Relación entre Producto y CodigoBarra
             modelBuilder.Entity<CodigoBarra>()
-                .HasKey(cb => cb.Id);
+                .HasOne(cb => cb.Producto)
+                .WithMany(p => p.CodigosBarra)
+                .HasForeignKey(cb => cb.ProductoId);
+
+            modelBuilder.Entity<CodigoBarra>()
+                .HasKey(cb => cb.ProductoId);
 
             // Configuración para el campo Precio de Producto
             modelBuilder.Entity<Producto>()
                 .Property(p => p.Precio)
                 .HasColumnType("decimal(18,2)");  // Especifica precisión 18 y escala 2
         }
+
     }
 }
